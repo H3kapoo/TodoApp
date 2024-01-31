@@ -6,13 +6,13 @@
 
 int main()
 {
-    const int32_t windowWidth = 500;
-    const int32_t windowHeight = 400;
+    const int32_t windowWidth = 1280;
+    const int32_t windowHeight = 720;
 
-    const int32_t minWidth = 500;
-    const int32_t minHeight = 400;
-    const int32_t maxWidth = 1920;
-    const int32_t maxHeight = 1080;
+    const int32_t minWidth = 800;
+    const int32_t minHeight = 600;
+    const int32_t maxWidth = 99999;
+    const int32_t maxHeight = 99999;
 
     /* Init glfw */
     if (GLFW_FALSE == glfwInit())
@@ -60,9 +60,9 @@ int main()
     //     std::placeholders::_3,
     //     std::placeholders::_4));
 
-    // inHelper.registerOnWindowResizeAction(std::bind(&Application::onWindowResize, &app,
-    //     std::placeholders::_1,
-    //     std::placeholders::_2));
+    inHelper.registerOnWindowResizeAction(std::bind(&todo::Application::onWindowResize, &app,
+        std::placeholders::_1,
+        std::placeholders::_2));
 
     // inHelper.registerOnMouseButtonAction(std::bind(&Application::onButtonAction, &app,
     //     std::placeholders::_1,
