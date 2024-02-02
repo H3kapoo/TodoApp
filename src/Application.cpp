@@ -32,50 +32,57 @@ void Application::setup()
     gTopNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
     gTopNode.gMesh.gUniKeeper.watch("uInnerColor", &gTopNode.gMesh.gColor);
     gTopNode.gMesh.gUniKeeper.watch("uBorderSize", &gTopNode.gStyle.gBorderSize);
+    gTopNode.gMesh.gUniKeeper.watch("uResolution", &gTopNode.gMesh.gBox.scale);
 
     gLeftNode.gMesh.gColor = utils::hexToVec4("#2818b4");
     gLeftNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
     gLeftNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
     gLeftNode.gMesh.gUniKeeper.watch("uInnerColor", &gLeftNode.gMesh.gColor);
     gLeftNode.gMesh.gUniKeeper.watch("uBorderSize", &gLeftNode.gStyle.gBorderSize);
+    gLeftNode.gMesh.gUniKeeper.watch("uResolution", &gLeftNode.gMesh.gBox.scale);
 
     gRightNode.gMesh.gColor = utils::hexToVec4("#2818b4");
     gRightNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
     gRightNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
     gRightNode.gMesh.gUniKeeper.watch("uInnerColor", &gRightNode.gMesh.gColor);
     gRightNode.gMesh.gUniKeeper.watch("uBorderSize", &gRightNode.gStyle.gBorderSize);
+    gRightNode.gMesh.gUniKeeper.watch("uResolution", &gRightNode.gMesh.gBox.scale);
 
     gRootNode.gMesh.gUniKeeper.watch("uInnerColor", &gRootNode.gMesh.gColor);
     gRootNode.gMesh.gUniKeeper.watch("uBorderColor", &gRootNode.gStyle.gBorderColor);
     gRootNode.gMesh.gUniKeeper.watch("uBorderSize", &gRootNode.gStyle.gBorderSize);
+    gRootNode.gMesh.gUniKeeper.watch("uResolution", &gRootNode.gMesh.gBox.scale);
 
     // printf("ceva\n");
     gRootNode.setStateSource(&gWindowState);
-    gRootNode.enableFastTreeSort();
 
     /* Push Child to root node */
     gRootNode.append(&gTopNode);
     gRootNode.append(&gLeftNode);
     gRootNode.append(&gRightNode);
 
+    gTopNode.append(&gTextNode);
+
+    gRootNode.enableFastTreeSort();
     gRootNode.updateFastTree();
+
+    gTopNode.registerOnMouseEnter([this](int, int)
+        {
+            gTopNode.gMesh.gColor = utils::hexToVec4("#136b63");
+        });
+
+    gTopNode.registerOnMouseExit([this](int, int)
+        {
+            gTopNode.gMesh.gColor = utils::hexToVec4("#16796F");
+        });
+
+    gTextNode.setFont("src/assets/fonts/cmr10.ttf", 32);
+    gTextNode.setText("Some text");
+    gTextNode.gMesh.gColor = utils::hexToVec4("#8c7373");
 }
 
 void Application::loop()
 {
-    // if (gReload == true)
-    // {
-    //     gRootNode.gStyle.gBorderSize = glm::vec4(0);
-    //     gTopNode.gStyle.gBorderSize = glm::vec4(0);
-    //     gLeftNode.gStyle.gBorderSize = glm::vec4(0);
-    // }
-    // else
-    // {
-    //     gRootNode.gStyle.gBorderSize = glm::vec4(4);
-    //     gTopNode.gStyle.gBorderSize = glm::vec4(4);
-    //     gLeftNode.gStyle.gBorderSize = glm::vec4(4);
-    // }
-
     auto& rootMesh = gRootNode.gMesh;
     rootMesh.gBox.pos.x = 10;
     rootMesh.gBox.pos.y = 10;
@@ -100,12 +107,19 @@ void Application::loop()
     rightMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - 10 - 8;
     rightMesh.gBox.scale.y = rootMesh.gBox.scale.y - topMesh.gBox.scale.y - 38;
 
+    auto& textMesh = gTextNode.gMesh;
+    textMesh.gBox.pos.x = rootMesh.gBox.pos.x + 10 + 4;
+    textMesh.gBox.pos.y = rootMesh.gBox.pos.y + 10 + 4;
+    textMesh.gBox.scale.x = 300;
+    textMesh.gBox.scale.y = 64;
+
     /* Render stuff, order independent (depends only on Z) */
     gRenderInstance.clearScreen();
     gRenderInstance.renderRectNode(gRootNode);
     gRenderInstance.renderRectNode(gTopNode);
     gRenderInstance.renderRectNode(gLeftNode);
     gRenderInstance.renderRectNode(gRightNode);
+    gRenderInstance.renderRectNode(gTextNode);
 }
 
 //TODO: Add helper for this inside LIB
@@ -141,4 +155,17 @@ void Application::onKeyPress(int key, int, int action, int)
     }
 }
 
+void Application::onButtonAction(int button, int action, int)
+{
+    gWindowState.mouseClicked = action == GLFW_PRESS ? true : false;
+    gWindowState.button = button; /*Left, Right, Middle, etc */
+    gRootNode.emitEvent(inputHelpers::Event::MouseButton);
+}
+
+void Application::onMouseMoveAction(double xPos, double yPos)
+{
+    gWindowState.mouseX = xPos;
+    gWindowState.mouseY = yPos;
+    gRootNode.emitEvent(inputHelpers::Event::MouseMove);
+}
 }

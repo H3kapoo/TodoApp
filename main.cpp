@@ -64,14 +64,14 @@ int main()
         std::placeholders::_1,
         std::placeholders::_2));
 
-    // inHelper.registerOnMouseButtonAction(std::bind(&Application::onButtonAction, &app,
-    //     std::placeholders::_1,
-    //     std::placeholders::_2,
-    //     std::placeholders::_3));
+    inHelper.registerOnMouseButtonAction(std::bind(&todo::Application::onButtonAction, &app,
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::placeholders::_3));
 
-    // inHelper.registerOnMouseMoveAction(std::bind(&Application::onMouseMoveAction, &app,
-    //     std::placeholders::_1,
-    //     std::placeholders::_2));
+    inHelper.registerOnMouseMoveAction(std::bind(&todo::Application::onMouseMoveAction, &app,
+        std::placeholders::_1,
+        std::placeholders::_2));
 
     // inHelper.registerOnMouseDropAction(std::bind(&Application::onMouseDrop, &app,
     //     std::placeholders::_1,
