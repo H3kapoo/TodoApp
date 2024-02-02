@@ -16,6 +16,7 @@ public:
     void loop();
 
     void onWindowResize(int width, int height);
+    void onKeyPress(int key, int, int action, int);
 
 private:
     void setTitle(const std::string& title);
@@ -25,8 +26,13 @@ private:
 
     /* Basic mesh */
     treeHelpers::ConcreteNode gRootNode{ gBasicVert, gBasicFrag };
+    treeHelpers::ConcreteNode gTopNode{ gBasicVert, gBasicFrag };
+    treeHelpers::ConcreteNode gLeftNode{ gBasicVert, gBasicFrag };
+    treeHelpers::ConcreteNode gRightNode{ gBasicVert, gBasicFrag };
 
     stateHelpers::WindowState gWindowState;
+
+    bool gReload{ false };
 
     GLFWwindow* gWindowHandle{ nullptr };
     shaderHelpers::ShaderHelper& gShInstance;

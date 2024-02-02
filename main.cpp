@@ -54,11 +54,11 @@ int main()
 
     inputHelpers::InputHelper& inHelper = inputHelpers::InputHelper::get();
     inHelper.observe(window);
-    // inHelper.registerOnKeyAction(std::bind(&Application::onKeyPress, &app,
-    //     std::placeholders::_1,
-    //     std::placeholders::_2,
-    //     std::placeholders::_3,
-    //     std::placeholders::_4));
+    inHelper.registerOnKeyAction(std::bind(&todo::Application::onKeyPress, &app,
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::placeholders::_3,
+        std::placeholders::_4));
 
     inHelper.registerOnWindowResizeAction(std::bind(&todo::Application::onWindowResize, &app,
         std::placeholders::_1,
