@@ -6,9 +6,9 @@ namespace todo
 {
 
 Application::Application(GLFWwindow* windowHandle)
-    : gWindowHandle{ windowHandle }
-    , gShInstance{ shaderHelpers::ShaderHelper::get() }
-    , gRenderInstance{ renderHelpers::RenderHelper::get() }
+    : gWindowHandle{windowHandle}
+    , gShInstance{shaderHelpers::ShaderHelper::get()}
+    , gRenderInstance{renderHelpers::RenderHelper::get()}
 {}
 
 void Application::setup()
@@ -19,8 +19,8 @@ void Application::setup()
     glfwGetWindowSize(gWindowHandle, &gWindowState.winWidth, &gWindowState.winHeight);
 
     /* Note: Highest Z renders in front of everything */
-    glm::mat4 projMatrix = glm::ortho(0.0f, (float)gWindowState.winWidth, (float)gWindowState.winHeight,
-        0.0f, renderHelpers::RenderHelper::MAX_LAYERS, 0.0f);
+    glm::mat4 projMatrix = glm::ortho(0.0f, (float)gWindowState.winWidth, (float)gWindowState.winHeight, 0.0f,
+        renderHelpers::RenderHelper::MAX_LAYERS, 0.0f);
     gRenderInstance.setProjectionMatrix(projMatrix);
 
     gRootNode.gMesh.gColor = utils::hexToVec4("#1F323C");
@@ -66,19 +66,13 @@ void Application::setup()
     gRootNode.enableFastTreeSort();
     gRootNode.updateFastTree();
 
-    gTopNode.registerOnMouseEnter([this](int, int)
-        {
-            gTopNode.gMesh.gColor = utils::hexToVec4("#136b63");
-        });
+    gTopNode.registerOnMouseEnter([this](int, int) { gTopNode.gMesh.gColor = utils::hexToVec4("#136b63"); });
 
-    gTopNode.registerOnMouseExit([this](int, int)
-        {
-            gTopNode.gMesh.gColor = utils::hexToVec4("#16796F");
-        });
+    gTopNode.registerOnMouseExit([this](int, int) { gTopNode.gMesh.gColor = utils::hexToVec4("#16796f"); });
 
     gTextNode.setFont("src/assets/fonts/cmr10.ttf", 32);
     gTextNode.setText("Some text");
-    gTextNode.gMesh.gColor = utils::hexToVec4("#8c7373");
+    gTextNode.gMesh.gColor = utils::hexToVec4("#8c737300");
 }
 
 void Application::loop()
@@ -122,7 +116,7 @@ void Application::loop()
     gRenderInstance.renderRectNode(gTextNode);
 }
 
-//TODO: Add helper for this inside LIB
+// TODO: Add helper for this inside LIB
 void Application::setTitle(const std::string& title)
 {
     /*This shall be abstracted by the window helpers eventually */
@@ -135,8 +129,8 @@ void Application::onWindowResize(int width, int height)
     gWindowState.winWidth = width;
     gWindowState.winHeight = height;
 
-    glm::mat4 projMatrix = glm::ortho(0.0f, (float)width, (float)height,
-        0.0f, renderHelpers::RenderHelper::MAX_LAYERS, 0.0f);
+    glm::mat4 projMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, renderHelpers::RenderHelper::MAX_LAYERS,
+        0.0f);
     gRenderInstance.setProjectionMatrix(projMatrix);
 
     /* glViewport is needed after changing the ortho matrix change or else
@@ -168,4 +162,4 @@ void Application::onMouseMoveAction(double xPos, double yPos)
     gWindowState.mouseY = yPos;
     gRootNode.emitEvent(inputHelpers::Event::MouseMove);
 }
-}
+} // namespace todo

@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include <hkui/vendor/GL/Glefw.hpp>
-#include <hkui/inputHelpers/InputHelper.hpp>
 #include "src/Application.hpp"
+#include <hkui/inputHelpers/InputHelper.hpp>
+#include <hkui/vendor/GL/Glefw.hpp>
 
 int main()
 {
@@ -18,7 +18,7 @@ int main()
     if (GLFW_FALSE == glfwInit())
     {
         perror("Something happened while trying to initialize GLFW\n");
-        return false;
+        return 1;
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,7 +31,7 @@ int main()
     {
         perror("Failed to create glew initializing window\n");
         glfwTerminate();
-        return false;
+        return 1;
     }
 
     glfwMakeContextCurrent(window);
@@ -41,7 +41,7 @@ int main()
     if (glewInit() != GLEW_OK)
     {
         perror("GLEW failed to initialize\n");
-        return false;
+        return 1;
     }
 
     /* Quick gpu info */
@@ -54,6 +54,7 @@ int main()
 
     inputHelpers::InputHelper& inHelper = inputHelpers::InputHelper::get();
     inHelper.observe(window);
+    // clang-format off
     inHelper.registerOnKeyAction(std::bind(&todo::Application::onKeyPress, &app,
         std::placeholders::_1,
         std::placeholders::_2,
@@ -76,6 +77,7 @@ int main()
     // inHelper.registerOnMouseDropAction(std::bind(&Application::onMouseDrop, &app,
     //     std::placeholders::_1,
     //     std::placeholders::_2));
+    // clang-format on
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

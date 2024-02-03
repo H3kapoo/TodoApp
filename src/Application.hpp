@@ -2,9 +2,9 @@
 
 #include <hkui/renderHelpers/RenderHelper.hpp>
 #include <hkui/shaderHelpers/ShaderHelper.hpp>
+#include <hkui/stateHelpers/WindowState.hpp>
 #include <hkui/treeHelpers/ConcreteNode.hpp>
 #include <hkui/treeHelpers/TextNode.hpp>
-#include <hkui/stateHelpers/WindowState.hpp>
 
 namespace todo
 {
@@ -24,25 +24,25 @@ public:
 private:
     void setTitle(const std::string& title);
 
-    std::string gBasicVert{ "src/assets/shaders/baseV.glsl" };
-    std::string gBasicFrag{ "src/assets/shaders/baseF.glsl" };
+    std::string gBasicVert{"src/assets/shaders/baseV.glsl"};
+    std::string gBasicFrag{"src/assets/shaders/baseF.glsl"};
 
-    std::string gTextVert{ "src/assets/shaders/textV.glsl" };
-    std::string gTextFrag{ "src/assets/shaders/textF.glsl" };
+    std::string gTextVert{"src/assets/shaders/textV.glsl"};
+    std::string gTextFrag{"src/assets/shaders/textF.glsl"};
 
     /* Basic mesh */
-    treeHelpers::ConcreteNode gRootNode{ gBasicVert, gBasicFrag };
-    treeHelpers::ConcreteNode gTopNode{ gBasicVert, gBasicFrag };
-    treeHelpers::ConcreteNode gLeftNode{ gBasicVert, gBasicFrag };
-    treeHelpers::ConcreteNode gRightNode{ gBasicVert, gBasicFrag };
-    treeHelpers::TextNode gTextNode{ gTextVert, gTextFrag };
+    treeHelpers::ConcreteNode gRootNode{gBasicVert, gBasicFrag};
+    treeHelpers::ConcreteNode gTopNode{gBasicVert, gBasicFrag};
+    treeHelpers::ConcreteNode gLeftNode{gBasicVert, gBasicFrag};
+    treeHelpers::ConcreteNode gRightNode{gBasicVert, gBasicFrag};
+    treeHelpers::TextNode gTextNode{gTextVert, gTextFrag};
 
     stateHelpers::WindowState gWindowState;
 
-    bool gReload{ false };
+    bool gReload{false};
 
-    GLFWwindow* gWindowHandle{ nullptr };
+    GLFWwindow* gWindowHandle{nullptr};
     shaderHelpers::ShaderHelper& gShInstance;
     renderHelpers::RenderHelper& gRenderInstance;
 };
-}
+} // namespace todo
