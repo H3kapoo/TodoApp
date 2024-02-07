@@ -83,8 +83,9 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window) && !app.gTerminated)
     {
+        // if (app.gTerminated) { return 1; }
         app.loop();
         glfwSwapBuffers(window);
         glfwWaitEvents();

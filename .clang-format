@@ -43,7 +43,8 @@ AlignOperands: Align
 PenaltyBreakAssignment: 120
 PenaltyBreakOpenParenthesis: 120
 # PenaltyBreakBeforeFirstCallParameter: 10000000
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 BinPackParameters: false
 LambdaBodyIndentation: Signature
 AllowShortFunctionsOnASingleLine: Empty

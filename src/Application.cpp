@@ -1,5 +1,8 @@
 #include "Application.hpp"
+#include "hkui/treeHelpers/TextNode.hpp"
 
+#include <GLFW/glfw3.h>
+#include <cstdio>
 #include <hkui/utils/CommonUtils.hpp>
 
 namespace todo
@@ -10,6 +13,15 @@ Application::Application(GLFWwindow* windowHandle)
     , gShInstance{shaderHelpers::ShaderHelper::get()}
     , gRenderInstance{renderHelpers::RenderHelper::get()}
 {}
+
+void Application::setSimpleNodeWithColor(treeHelpers::ConcreteNode& node, const std::string colorSHex)
+{
+    node.gMesh.gColor = utils::hexToVec4(colorSHex);
+    node.gMesh.gUniKeeper.watch("uInnerColor", &node.gMesh.gColor);
+    node.gMesh.gUniKeeper.watch("uResolution", &node.gMesh.gBox.scale);
+    node.gMesh.gUniKeeper.defaultVec4("uBorderColor");
+    node.gMesh.gUniKeeper.defaultVec4("uBorderSize");
+}
 
 void Application::setup()
 {
@@ -23,97 +35,92 @@ void Application::setup()
         renderHelpers::RenderHelper::MAX_LAYERS, 0.0f);
     gRenderInstance.setProjectionMatrix(projMatrix);
 
-    gRootNode.gMesh.gColor = utils::hexToVec4("#1F323C");
-    gRootNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
-    gRootNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
+    setSimpleNodeWithColor(gRootNode, "#1F323C");
+    setSimpleNodeWithColor(gVSepNode, "#1F3A48");
+    setSimpleNodeWithColor(gLeftNode, "#1F3A4800");
+    setSimpleNodeWithColor(gRightNode, "#1F3A4800");
 
-    gTopNode.gMesh.gColor = utils::hexToVec4("#b41818");
-    gTopNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
-    gTopNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
-    gTopNode.gMesh.gUniKeeper.watch("uInnerColor", &gTopNode.gMesh.gColor);
-    gTopNode.gMesh.gUniKeeper.watch("uBorderSize", &gTopNode.gStyle.gBorderSize);
-    gTopNode.gMesh.gUniKeeper.watch("uResolution", &gTopNode.gMesh.gBox.scale);
-
-    gLeftNode.gMesh.gColor = utils::hexToVec4("#2818b4");
-    gLeftNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
-    gLeftNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
-    gLeftNode.gMesh.gUniKeeper.watch("uInnerColor", &gLeftNode.gMesh.gColor);
-    gLeftNode.gMesh.gUniKeeper.watch("uBorderSize", &gLeftNode.gStyle.gBorderSize);
-    gLeftNode.gMesh.gUniKeeper.watch("uResolution", &gLeftNode.gMesh.gBox.scale);
-
-    gRightNode.gMesh.gColor = utils::hexToVec4("#2818b4");
-    gRightNode.gStyle.gBorderColor = utils::hexToVec4("#349798");
-    gRightNode.gStyle.gBorderSize = glm::vec4(4, 4, 4, 4);
-    gRightNode.gMesh.gUniKeeper.watch("uInnerColor", &gRightNode.gMesh.gColor);
-    gRightNode.gMesh.gUniKeeper.watch("uBorderSize", &gRightNode.gStyle.gBorderSize);
-    gRightNode.gMesh.gUniKeeper.watch("uResolution", &gRightNode.gMesh.gBox.scale);
-
-    gRootNode.gMesh.gUniKeeper.watch("uInnerColor", &gRootNode.gMesh.gColor);
-    gRootNode.gMesh.gUniKeeper.watch("uBorderColor", &gRootNode.gStyle.gBorderColor);
-    gRootNode.gMesh.gUniKeeper.watch("uBorderSize", &gRootNode.gStyle.gBorderSize);
-    gRootNode.gMesh.gUniKeeper.watch("uResolution", &gRootNode.gMesh.gBox.scale);
-
-    // printf("ceva\n");
     gRootNode.setStateSource(&gWindowState);
 
     /* Push Child to root node */
-    gRootNode.append(&gTopNode);
+    gRootNode.append(&gVSepNode);
     gRootNode.append(&gLeftNode);
     gRootNode.append(&gRightNode);
 
-    gTopNode.append(&gTextNode);
+    gLeftNode.append(&gOngoingTextNode);
+    gRightNode.append(&gDoneTextNode);
 
     gRootNode.enableFastTreeSort();
     gRootNode.updateFastTree();
 
-    gTopNode.registerOnMouseEnter([this](int, int) { gTopNode.gMesh.gColor = utils::hexToVec4("#136b63"); });
+    gOngoingTextNode.setFont("src/assets/fonts/cmr10.ttf", 32);
+    gOngoingTextNode.setText("Ongoing");
+    gOngoingTextNode.alignTextToHorizontal(treeHelpers::TextNode::Direction::PreCenter);
+    gOngoingTextNode.setTextHorizontalPadding(20);
+    gOngoingTextNode.gStyle.gGradColor1 = utils::hexToVec4("#132128");
+    gOngoingTextNode.gStyle.gGradColor2 = utils::hexToVec4("#1F323C");
+    gOngoingTextNode.gMesh.gUniKeeper.watch("uColStart", &gOngoingTextNode.gStyle.gGradColor1);
+    gOngoingTextNode.gMesh.gUniKeeper.watch("uColEnd", &gOngoingTextNode.gStyle.gGradColor2);
 
-    gTopNode.registerOnMouseExit([this](int, int) { gTopNode.gMesh.gColor = utils::hexToVec4("#16796f"); });
-
-    gTextNode.setFont("src/assets/fonts/cmr10.ttf", 32);
-    gTextNode.setText("Some text");
-    gTextNode.gMesh.gColor = utils::hexToVec4("#8c737300");
+    gDoneTextNode.setFont("src/assets/fonts/cmr10.ttf", 32);
+    gDoneTextNode.setText("Done");
+    gDoneTextNode.alignTextToHorizontal(treeHelpers::TextNode::Direction::PostCenter);
+    gDoneTextNode.setTextHorizontalPadding(20);
+    gDoneTextNode.gStyle.gGradColor1 = utils::hexToVec4("#1F323C");
+    gDoneTextNode.gStyle.gGradColor2 = utils::hexToVec4("#132128");
+    gDoneTextNode.gMesh.gUniKeeper.watch("uColStart", &gDoneTextNode.gStyle.gGradColor1);
+    gDoneTextNode.gMesh.gUniKeeper.watch("uColEnd", &gDoneTextNode.gStyle.gGradColor2);
 }
 
 void Application::loop()
 {
-    auto& rootMesh = gRootNode.gMesh;
-    rootMesh.gBox.pos.x = 10;
-    rootMesh.gBox.pos.y = 10;
-    rootMesh.gBox.scale.x = gWindowState.winWidth - 20;
-    rootMesh.gBox.scale.y = gWindowState.winHeight - 20;
+    const int32_t vSepScale = 10;
+    const int32_t emptySpaceX = 10 + vSepScale + 10;
 
-    auto& topMesh = gTopNode.gMesh;
-    topMesh.gBox.pos.x = rootMesh.gBox.pos.x + 10 + 4;
-    topMesh.gBox.pos.y = rootMesh.gBox.pos.y + 10 + 4;
-    topMesh.gBox.scale.x = rootMesh.gBox.scale.x - 20 - 8;
-    topMesh.gBox.scale.y = rootMesh.gBox.scale.y * 0.25f;
+    auto& rootMesh = gRootNode.gMesh;
+    rootMesh.gBox.pos.x = 0;
+    rootMesh.gBox.pos.y = 0;
+    rootMesh.gBox.scale.x = gWindowState.winWidth;
+    rootMesh.gBox.scale.y = gWindowState.winHeight;
 
     auto& leftMesh = gLeftNode.gMesh;
-    leftMesh.gBox.pos.x = topMesh.gBox.pos.x;
-    leftMesh.gBox.pos.y = topMesh.gBox.pos.y + topMesh.gBox.scale.y + 10;
-    leftMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - 10 - 8;
-    leftMesh.gBox.scale.y = rootMesh.gBox.scale.y - topMesh.gBox.scale.y - 38;
+    leftMesh.gBox.pos.x = rootMesh.gBox.pos.x;
+    leftMesh.gBox.pos.y = rootMesh.gBox.pos.y;
+    leftMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - emptySpaceX * 0.5f;
+    leftMesh.gBox.scale.y = rootMesh.gBox.scale.y;
+
+    auto& vSepMesh = gVSepNode.gMesh;
+    vSepMesh.gBox.pos.x = (leftMesh.gBox.pos.x + leftMesh.gBox.scale.x) + 10;
+    vSepMesh.gBox.pos.y = rootMesh.gBox.pos.y + 10;
+    vSepMesh.gBox.scale.x = vSepScale;
+    vSepMesh.gBox.scale.y = rootMesh.gBox.scale.y - 20;
 
     auto& rightMesh = gRightNode.gMesh;
-    rightMesh.gBox.pos.x = leftMesh.gBox.pos.x + leftMesh.gBox.scale.x + 8;
-    rightMesh.gBox.pos.y = topMesh.gBox.pos.y + topMesh.gBox.scale.y + 10;
-    rightMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - 10 - 8;
-    rightMesh.gBox.scale.y = rootMesh.gBox.scale.y - topMesh.gBox.scale.y - 38;
+    rightMesh.gBox.pos.x = (vSepMesh.gBox.pos.x + vSepMesh.gBox.scale.x) + 10;
+    rightMesh.gBox.pos.y = rootMesh.gBox.pos.y;
+    rightMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - emptySpaceX * 0.5f;
+    rightMesh.gBox.scale.y = rootMesh.gBox.scale.y;
 
-    auto& textMesh = gTextNode.gMesh;
-    textMesh.gBox.pos.x = rootMesh.gBox.pos.x + 10 + 4;
-    textMesh.gBox.pos.y = rootMesh.gBox.pos.y + 10 + 4;
-    textMesh.gBox.scale.x = 300;
-    textMesh.gBox.scale.y = 64;
+    auto& ongoingTextMesh = gOngoingTextNode.gMesh;
+    ongoingTextMesh.gBox.pos.x = leftMesh.gBox.pos.x;
+    ongoingTextMesh.gBox.pos.y = leftMesh.gBox.pos.y;
+    ongoingTextMesh.gBox.scale.x = 300;
+    ongoingTextMesh.gBox.scale.y = 64;
+
+    auto& doneTextMesh = gDoneTextNode.gMesh;
+    doneTextMesh.gBox.pos.x = (rightMesh.gBox.pos.x + rightMesh.gBox.scale.x) - 300;
+    doneTextMesh.gBox.pos.y = rightMesh.gBox.pos.y;
+    doneTextMesh.gBox.scale.x = 300;
+    doneTextMesh.gBox.scale.y = 64;
 
     /* Render stuff, order independent (depends only on Z) */
     gRenderInstance.clearScreen();
     gRenderInstance.renderRectNode(gRootNode);
-    gRenderInstance.renderRectNode(gTopNode);
+    gRenderInstance.renderRectNode(gVSepNode);
     gRenderInstance.renderRectNode(gLeftNode);
     gRenderInstance.renderRectNode(gRightNode);
-    gRenderInstance.renderRectNode(gTextNode);
+    gRenderInstance.renderRectNode(gOngoingTextNode);
+    gRenderInstance.renderRectNode(gDoneTextNode);
 }
 
 // TODO: Add helper for this inside LIB
@@ -143,10 +150,9 @@ void Application::onWindowResize(int width, int height)
 
 void Application::onKeyPress(int key, int, int action, int)
 {
-    if (key == GLFW_KEY_R && action == GLFW_PRESS)
-    {
-        gReload = !gReload;
-    }
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) { gReload = !gReload; }
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { gTerminated = true; }
 }
 
 void Application::onButtonAction(int button, int action, int)
