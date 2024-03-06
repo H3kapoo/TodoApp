@@ -6,6 +6,8 @@
 #include <hkui/treeHelpers/ConcreteNode.hpp>
 #include <hkui/treeHelpers/TextNode.hpp>
 
+#include "Components/TodoScrollArea.hpp"
+
 namespace todo
 {
 class Application
@@ -25,7 +27,7 @@ public:
 
 private:
     void setTitle(const std::string& title);
-    void setSimpleNodeWithColor(treeHelpers::ConcreteNode& node, const std::string colorSHex);
+    void setSimpleNodeWithColor(treeHelpers::ConcreteNode& node, const std::string colorHex);
 
     std::string gBasicVert{"src/assets/shaders/baseV.glsl"};
     std::string gBasicFrag{"src/assets/shaders/baseF.glsl"};
@@ -35,13 +37,15 @@ private:
 
     std::string gLinGradVert{"src/assets/shaders/linGradV.glsl"};
     std::string gLinGradFrag{"src/assets/shaders/linGradF.glsl"};
-    /* Basic mesh */
+
     treeHelpers::ConcreteNode gRootNode{gBasicVert, gBasicFrag};
     treeHelpers::ConcreteNode gLeftNode{gBasicVert, gBasicFrag};
     treeHelpers::ConcreteNode gRightNode{gBasicVert, gBasicFrag};
     treeHelpers::ConcreteNode gVSepNode{gBasicVert, gBasicFrag};
     treeHelpers::TextNode gOngoingTextNode{gTextVert, gTextFrag, gLinGradVert, gLinGradFrag};
     treeHelpers::TextNode gDoneTextNode{gTextVert, gTextFrag, gLinGradVert, gLinGradFrag};
+
+    TodoScrollArea gTodoBox;
 
     stateHelpers::WindowState gWindowState;
 

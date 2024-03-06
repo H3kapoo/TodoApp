@@ -20,11 +20,12 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     include_directories (${GLEW_LIBRARY_INCLUDE_DIRECTORY})
     include_directories (${GLFW_LIBRARY_INCLUDE_DIRECTORY})
 
-
     add_executable(${PROJECT_NAME}
         main.cpp
         src/Application.cpp
     )
+
+    add_subdirectory(src/Components)
 
     set(HKUI_LIBRARY_PATH_DIRECTORY "/home/hekapoo/lib_hkui/lib/")
     set(FT_LIBRARY_PATH_DIRECTORY "/home/hekapoo/Downloads/freeType2/freetype-2.13.1/objs/.libs")

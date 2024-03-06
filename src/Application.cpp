@@ -14,9 +14,9 @@ Application::Application(GLFWwindow* windowHandle)
     , gRenderInstance{renderHelpers::RenderHelper::get()}
 {}
 
-void Application::setSimpleNodeWithColor(treeHelpers::ConcreteNode& node, const std::string colorSHex)
+void Application::setSimpleNodeWithColor(treeHelpers::ConcreteNode& node, const std::string colorHex)
 {
-    node.gMesh.gColor = utils::hexToVec4(colorSHex);
+    node.gMesh.gColor = utils::hexToVec4(colorHex);
     node.gMesh.gUniKeeper.watch("uInnerColor", &node.gMesh.gColor);
     node.gMesh.gUniKeeper.watch("uResolution", &node.gMesh.gBox.scale);
     node.gMesh.gUniKeeper.defaultVec4("uBorderColor");
@@ -49,6 +49,7 @@ void Application::setup()
 
     gLeftNode.append(&gOngoingTextNode);
     gRightNode.append(&gDoneTextNode);
+    gRightNode.append(&gTodoBox);
 
     gRootNode.enableFastTreeSort();
     gRootNode.updateFastTree();
@@ -113,6 +114,13 @@ void Application::loop()
     doneTextMesh.gBox.scale.x = 300;
     doneTextMesh.gBox.scale.y = 64;
 
+    // todo box
+    auto& todoMesh = gTodoBox.gMesh;
+    todoMesh.gBox.pos.x = rootMesh.gBox.pos.x + 10;
+    todoMesh.gBox.pos.y = rootMesh.gBox.pos.y + (ongoingTextMesh.gBox.pos.y + ongoingTextMesh.gBox.scale.y) + 10;
+    todoMesh.gBox.scale.x = rootMesh.gBox.scale.x * 0.5f - emptySpaceX * 0.5f - 10;
+    todoMesh.gBox.scale.y = rootMesh.gBox.scale.y - ongoingTextMesh.gBox.scale.y - 20;
+
     /* Render stuff, order independent (depends only on Z) */
     gRenderInstance.clearScreen();
     gRenderInstance.renderRectNode(gRootNode);
@@ -121,6 +129,8 @@ void Application::loop()
     gRenderInstance.renderRectNode(gRightNode);
     gRenderInstance.renderRectNode(gOngoingTextNode);
     gRenderInstance.renderRectNode(gDoneTextNode);
+
+    gRenderInstance.renderRectNode(gTodoBox);
 }
 
 // TODO: Add helper for this inside LIB
